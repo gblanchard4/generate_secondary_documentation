@@ -59,6 +59,7 @@ Markdown page Example:
 Secondary
 -----------------------------
 Filepath
+
 '''
 def make_header(analysis_folder):
 	title = "# {}  \n".format(os.path.basename(analysis_folder)) 
@@ -94,8 +95,6 @@ def make_secondary_folder(analysis_folder):
 			alpha_list.append("#### Alpha Diversity\n")
 			alpha_graphic = os.listdir("{}/alpha_diversity/alpha_rarefaction_plots/average_plots/".format(filepath))[0]
 			alpha_graphic_path = "{}/alpha_diversity/alpha_rarefaction_plots/average_plots/{}".format(filepath, alpha_graphic)
-			#print alpha_graphic
-			#print "![Alpha Plot](file:/{} 'Alpha plot')  \n".format(alpha_graphic_path)
 			alpha_list.append("![Alpha Plot](file://{} 'Example Alpha Plot')  \n  \n".format(alpha_graphic_path))
 			alpha_list.append("* [Rarefaction Plots](file://{}/alpha_diversity/alpha_rarefaction_plots/rarefaction_plots.html)  \n".format(filepath))
 
