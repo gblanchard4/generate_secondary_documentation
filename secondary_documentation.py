@@ -50,6 +50,7 @@ Secondary analysis folder structure
 
 
 Markdown page Example:
+
 # Root Folder Name 		>- Link to root folder
 -----------------------------
 * Secondary 			\-
@@ -60,7 +61,7 @@ Secondary
 -----------------------------
 Filepath
  
- 
+
 '''
 def make_header(analysis_folder):
 	title = "# {}  \n".format(os.path.basename(analysis_folder)) 
