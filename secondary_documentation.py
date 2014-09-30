@@ -80,6 +80,8 @@ def make_secondary_folder(analysis_folder):
 		if os.path.isdir(filepath):
 			string_list.append("## {0}  \n#### [Filepath]({1})  \n".format(name, filepath))
 
+			# Need seperate string buffers for each 'section'
+
 			# Alpha diversity
 			string_list.append("#### Alpha Diversity\n* [Rarefaction Plots](file://{}/alpha_diversity/alpha_rarefaction_plots/rarefaction_plots.html)  \n".format(filepath))
 
