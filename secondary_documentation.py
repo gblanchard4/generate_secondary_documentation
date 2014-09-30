@@ -67,15 +67,14 @@ def make_header(analysis_folder):
 
 def make_secondary_folder_list(analysis_folder):
 	secondary_folder_list = []
-	for secondary_folder in os.listdir(analysis_folder):
-		print os.path.isdir(secondary_folder)
+	for secondary_folder in list_subdirectories(analysis_folder):
 		folder_bullet = "* [{}](#{})  \n".format(secondary_folder,secondary_folder.lower())
 		secondary_folder_list.append(folder_bullet)
 	return secondary_folder_list 
 
 def make_secondary_folder(analysis_folder):
 	string_list = []
-	for secondary_folder in os.listdir(analysis_folder):
+	for secondary_folder in list_subdirectories(analysis_folder):
 		name = secondary_folder
 		filepath = analysis_folder+'/'+name
 		if os.path.isdir(filepath):
@@ -95,14 +94,16 @@ def make_secondary_folder(analysis_folder):
 				# For the 2d plots
 				if beta_folder.startswith('2d'):
 					string_list.append("##### 2D Plots  \n* [Unweighted Unifrac](file://{0}/beta_diversity/2d_unweighted_unifrac_plots/unweighted_unifrac_pc_2D_PCoA_plots.html)  \n* [Weighted Unifrac](file://{0}/beta_diversity/2d_weighted_unifrac_plots/weighted_unifrac_pc_2D_PCoA_plots.html)  \n".format(filepath))
+				# For the Emperor plots
+				if '_emperor_' in beta_folder:
+					string_list.append("##### 3D Plots  \n* [Unweighted Unifrac](file://{0}/beta_diversity/unweighted_unifrac_emperor_pcoa_plot/index.html)  \n* [Weighted Unifrac](file://{0}/beta_diversity/weighted_unifrac_emperor_pcoa_plot//index.html)  \n".format(filepath))
+
 	return string_list
 
 
-
-#Get the full path of all the children
-def listdir_fullpath(d):
-	return [os.path.join(d, os.path.abspath(f)) for f in os.listdir(d)]
-
+def list_subdirectories(parent_dir):
+    return [name for name in os.listdir(parent_dir)
+            if os.path.isdir(os.path.join(parent_dir, name))]
 
 
 def main():
@@ -134,9 +135,8 @@ def main():
 		markdown.write(make_header(analysis_folder))
 		for bullet in make_secondary_folder_list(analysis_folder):
 			markdown.write(bullet)
-		print make_secondary_folder_list(analysis_folder)
-		#for secondary_folder_string in make_secondary_folder(analysis_folder):
-		#	markdown.write(secondary_folder_string)
+		for secondary_folder_string in make_secondary_folder(analysis_folder):
+			markdown.write(secondary_folder_string)
 
 
 
