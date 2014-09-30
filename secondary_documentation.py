@@ -61,7 +61,7 @@ Secondary
 Filepath
 '''
 def make_header(analysis_folder):
-	title = "# [{}]({})  \n".format(os.path.basename(analysis_folder),os.path.abspath(analysis_folder)) 
+	title = "# {}  \n".format(os.path.basename(analysis_folder)) 
 	return title
 
 def make_secondary_folder_list(analysis_folder):
@@ -76,18 +76,28 @@ def make_secondary_folder(analysis_folder):
 	for secondary_folder in list_subdirectories(analysis_folder):
 		name = secondary_folder
 		filepath = analysis_folder+'/'+name
+	
 		# Lists to hold the strings for each section, so we don't have duplicates
 		alpha_list = []
 		beta_list = []
 		taxa_list = []
 
 		if os.path.isdir(filepath):
-			string_list.append("## {0}  \n#### [Filepath]({1})  \n".format(name, filepath))
+			string_list.append("---\n## {0}  \n#### [Click To Open Analysis Folder In Browser]({1})  \n".format(name, filepath))
+
+			# Stats table
+			string_list.append(biom_summary_to_table(filepath))
 
 			# Need seperate string buffers for each 'section'
 
 			# Alpha diversity
-			alpha_list.append("#### Alpha Diversity\n* [Rarefaction Plots](file://{}/alpha_diversity/alpha_rarefaction_plots/rarefaction_plots.html)  \n".format(filepath))
+			alpha_list.append("#### Alpha Diversity\n")
+			alpha_graphic = os.listdir("{}/alpha_diversity/alpha_rarefaction_plots/average_plots/".format(filepath))[0]
+			alpha_graphic_path = "{}/alpha_diversity/alpha_rarefaction_plots/average_plots/{}".format(filepath, alpha_graphic)
+			#print alpha_graphic
+			#print "![Alpha Plot](file:/{} 'Alpha plot')  \n".format(alpha_graphic_path)
+			alpha_list.append("![Alpha Plot](file://{} 'Example Alpha Plot')  \n  \n".format(alpha_graphic_path))
+			alpha_list.append("* [Rarefaction Plots](file://{}/alpha_diversity/alpha_rarefaction_plots/rarefaction_plots.html)  \n".format(filepath))
 
 			# Taxa summary
 			taxa_list.append("#### Taxa Summary  \n")
@@ -127,8 +137,42 @@ def make_secondary_folder(analysis_folder):
 
 
 def list_subdirectories(parent_dir):
-    return [name for name in os.listdir(parent_dir)
-            if os.path.isdir(os.path.join(parent_dir, name))]
+	return [name for name in os.listdir(parent_dir)
+		if os.path.isdir(os.path.join(parent_dir, name))]
+
+def biom_summary_to_table(secondary_folder):
+	with open(secondary_folder+'/table_summary.txt') as table_file:
+		# Markdown header string 
+		markdown_string = "#### Biom Stats\n```  \n"
+		for line in table_file:
+			# Get important information
+			# Number of samples
+			if line.startswith('Num samples:'):
+				value_list = line.rstrip().split(': ')
+				markdown_string += "{}			{}\n".format(value_list[0], value_list[1])
+			if line.startswith('Num observations: '):
+				value_list = line.rstrip().split(': ')
+				markdown_string += "{}	{}\n".format(value_list[0], value_list[1])
+			if line.startswith('Total count: '):
+				value_list = line.rstrip().split(': ')
+				markdown_string += "{}			{}\n".format(value_list[0], value_list[1])
+			if line.startswith(' Min: '):
+				value_list = line.rstrip().split(': ')
+				markdown_string += "{}					{}\n".format(value_list[0].lstrip(), value_list[1])
+			if line.startswith(' Max: '):
+				value_list = line.rstrip().split(': ')
+				markdown_string += "{}					{}\n".format(value_list[0].lstrip(), value_list[1])
+			if line.startswith(' Median: '):
+				value_list = line.rstrip().split(': ')
+				markdown_string += "{}				{}\n".format(value_list[0].lstrip(), value_list[1])
+			if line.startswith(' Mean: '):
+				value_list = line.rstrip().split(': ')
+				markdown_string += "{}				{}\n".format(value_list[0].lstrip(), value_list[1])
+	markdown_string += "```   \n"
+	return markdown_string
+
+
+
 
 
 def main():
