@@ -19,10 +19,10 @@ Secondary analysis folder structure
 |	+---logfile.log
 |	+---biom_summary.txt
 |	\---alpha_diversity
-		\---alpha_rarefaction_plots
-			+---rarefaction_plots.html
-			\---average_plots
-				+--(pngs containing plots)
+|		\---alpha_rarefaction_plots
+|			+---rarefaction_plots.html
+|			\---average_plots
+|				+--(pngs containing plots)
 |		\---alpha_div_collated
 |			+---chao1.txt
 |			\---chao1_category
@@ -44,8 +44,7 @@ Secondary analysis folder structure
 |			\---simpson_category
 |				+--category_boxplots.pdf
 |				+--category_stats.txt
-|			+batchdatetime
-|			
+|			+batchdatetime	
 |		\---alpha_rarefaction_plots
 |		+---log_datetime.txt
 
@@ -77,29 +76,53 @@ def make_secondary_folder(analysis_folder):
 	for secondary_folder in list_subdirectories(analysis_folder):
 		name = secondary_folder
 		filepath = analysis_folder+'/'+name
+		# Lists to hold the strings for each section, so we don't have duplicates
+		alpha_list = []
+		beta_list = []
+		taxa_list = []
+
 		if os.path.isdir(filepath):
 			string_list.append("## {0}  \n#### [Filepath]({1})  \n".format(name, filepath))
 
 			# Need seperate string buffers for each 'section'
 
 			# Alpha diversity
-			string_list.append("#### Alpha Diversity\n* [Rarefaction Plots](file://{}/alpha_diversity/alpha_rarefaction_plots/rarefaction_plots.html)  \n".format(filepath))
+			alpha_list.append("#### Alpha Diversity\n* [Rarefaction Plots](file://{}/alpha_diversity/alpha_rarefaction_plots/rarefaction_plots.html)  \n".format(filepath))
 
 			# Taxa summary
-			string_list.append("#### Taxa Summary  \n")
+			taxa_list.append("#### Taxa Summary  \n")
 			for taxa_folder in os.listdir(filepath+"/taxa_summary/"):
-				string_list.append("##### {1}  \n* [Bar Charts](file://{0}/taxa_summary/{1}/taxa_summary_plots/bar_charts.html)  \n* [Area Charts](file://{0}/taxa_summary/{1}/taxa_summary_plots/area_charts.html)  \n".format(filepath,taxa_folder)) 
+				taxa_list.append("##### {}  \n".format(taxa_folder))
+				taxa_list.append("* [Bar Charts](file://{0}/taxa_summary/{1}/taxa_summary_plots/bar_charts.html)  \n".format(filepath,taxa_folder)) 
+				taxa_list.append("* [Area Charts](file://{0}/taxa_summary/{1}/taxa_summary_plots/area_charts.html)  \n".format(filepath,taxa_folder)) 
 
 			# Beta Diversity
-			string_list.append("#### Beta Diversity  \n")
+			beta_list.append("#### Beta Diversity  \n")
+			beta_2d_list = ["##### 2D Plots \n"]
+			beta_3d_list =  ["##### 3D Plots \n"]
 			for beta_folder in os.listdir(filepath+"/beta_diversity/"):
 				# For the 2d plots
-				if beta_folder.startswith('2d'):
-					string_list.append("##### 2D Plots  \n* [Unweighted Unifrac](file://{0}/beta_diversity/2d_unweighted_unifrac_plots/unweighted_unifrac_pc_2D_PCoA_plots.html)  \n* [Weighted Unifrac](file://{0}/beta_diversity/2d_weighted_unifrac_plots/weighted_unifrac_pc_2D_PCoA_plots.html)  \n".format(filepath))
-				# For the Emperor plots
-				if '_emperor_' in beta_folder:
-					string_list.append("##### 3D Plots  \n* [Unweighted Unifrac](file://{0}/beta_diversity/unweighted_unifrac_emperor_pcoa_plot/index.html)  \n* [Weighted Unifrac](file://{0}/beta_diversity/weighted_unifrac_emperor_pcoa_plot//index.html)  \n".format(filepath))
+				if beta_folder.startswith('2d_unweighted'):
+					beta_2d_list.append("* [Unweighted Unifrac](file://{0}/beta_diversity/2d_unweighted_unifrac_plots/unweighted_unifrac_pc_2D_PCoA_plots.html)  \n".format(filepath))
+				if beta_folder.startswith('2d_weighted'):
+					beta_2d_list.append("* [Weighted Unifrac](file://{0}/beta_diversity/2d_weighted_unifrac_plots/weighted_unifrac_pc_2D_PCoA_plots.html)  \n".format(filepath))
 
+				# For the 3d Emperor plots
+				if '_emperor_' in beta_folder:
+					if beta_folder.startswith('unweighted_'):
+						beta_3d_list.append("* [Unweighted Unifrac](file://{0}/beta_diversity/unweighted_unifrac_emperor_pcoa_plot/index.html)  \n".format(filepath))
+					if beta_folder.startswith('weighted_'):
+						beta_3d_list.append("* [Weighted Unifrac](file://{0}/beta_diversity/weighted_unifrac_emperor_pcoa_plot//index.html)  \n".format(filepath))
+			# Add the 2d and 3d plots to the main list
+			
+			beta_list.extend(beta_2d_list)
+
+			beta_list.extend(beta_3d_list)
+
+			# Add Alpha, Taxa, and Beta to the master list
+			string_list.extend(alpha_list)
+			string_list.extend(taxa_list)
+			string_list.extend(beta_list)			
 	return string_list
 
 
