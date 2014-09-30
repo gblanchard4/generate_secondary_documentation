@@ -59,7 +59,8 @@ Markdown page Example:
 Secondary
 -----------------------------
 Filepath
-
+ 
+ 
 '''
 def make_header(analysis_folder):
 	title = "# {}  \n".format(os.path.basename(analysis_folder)) 
