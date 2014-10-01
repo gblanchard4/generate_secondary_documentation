@@ -66,21 +66,21 @@ Filepath
 
 '''
 def make_header(analysis_folder):
-	title = "# {}  \n".format(os.path.basename(analysis_folder)) 
+	title = "<h1>{}</h1> \n".format(os.path.basename(analysis_folder)) 
 	return title
 
 def make_secondary_folder_list(analysis_folder):
 	secondary_folder_list = []
 	for secondary_folder in list_subdirectories(analysis_folder):
 		filepath =  analysis_folder+'/'+secondary_folder
-		folder_bullet = "* #####[{}]({}/index.html)  \n".format(secondary_folder,filepath)
+		folder_bullet = "#####[{}]({}/index.html)  \n".format(secondary_folder,filepath)
 		secondary_folder_list.append(folder_bullet)
 	return secondary_folder_list 
 
 def make_secondary_folder_index(analysis_folder):
 	
 	for secondary_folder in list_subdirectories(analysis_folder):
-		string_list = ['<link href="file://{}/github-markdown.css" rel="stylesheet"></link>  \n'.format(analysis_folder)]
+		string_list = ['<link href="https://github.com/gblanchard4/sublimetext-markdown-preview/blob/master/markdown.css" rel="stylesheet"></link>  \n']
 		#string_list = ['<link href="http://kevinburke.bitbucket.org/markdowncss/markdown.css" rel="stylesheet"></link>  \n']
 		name = secondary_folder
 		filepath = analysis_folder+'/'+name
@@ -217,8 +217,9 @@ def main():
 
 	# Write the markdown file
 	with open(analysis_folder+'/index.md', 'w') as markdown_file:
-		# CSS
-		markdown_file.write('<link href="file://{}/github-markdown.css" rel="stylesheet"></link>  \n'.format(analysis_folder))
+		# Make title
+		markdown_file.write('<head><title>{}</title>'.format(os.path.basename(analysis_folder)))
+		markdown_file.write('<link href="https://github.com/gblanchard4/sublimetext-markdown-preview/blob/master/markdown.css"></link> </head> \n')
 		# Make the title
 		markdown_file.write(make_header(analysis_folder))
 		# Make the instructions
