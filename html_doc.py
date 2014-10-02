@@ -131,11 +131,53 @@ def make_secondary_body(secondary_folder_path):
 	body_string += '<hr>\n'	
 
 	# Core microbiome
-	body_string += '<h2>Core microbiome</h2><h5>Something something core microbiome</h4>\n'
+	body_string += '<h2>Core microbiome</h2><h5>Something something core microbiome</h5>\n'
 	# Create links to all the core microbiome stuffs
-	for core_folder in os.listdir(secondary_folder_path+'/core_microbiome/'):
+	for core_folder in list_subdirectories(secondary_folder_path+'/core_microbiome/'):
+		# Folder name
+		body_string += '<h4>{}</h4>'.format(core_folder)
+		# string buffers for txt & biom files
+		txt_buffer = "<h5>Text Files</h5>\n"
+		txt_list = []
+		biom_buffer = "<h5>Biom Files</h5>\n"
+		biom_list = []
+		# Traverse the core folder for all its children
+		for child_file in os.listdir(secondary_folder_path+'/core_microbiome/'+core_folder):
+			# Use level for sorting 
+			# Text files
+			if child_file.split('.')[1] == 'txt':
+				level = int(child_file.rstrip('.txt').split('_')[-1])
+				txt_tuple = secondary_folder_path+'/core_microbiome/'+core_folder+'/'+child_file, level
+				txt_list.append(txt_tuple)
+			# Biom files
+			if child_file.split('.')[1] == 'biom':
+				level = int(child_file.rstrip('.biom').split('_')[-1])
+				biom_tuple = secondary_folder_path+'/core_microbiome/'+core_folder+'/'+child_file, level
+				biom_list.append(biom_tuple)
+		# Sort the list based on the level
+		txt_list = sorted(txt_list, key= lambda txt: txt[1] )
+		biom_list = sorted(biom_list, key= lambda biom: biom[1] )
+
+		# Make some html
+		for txt_file in txt_list:
+			filepath = txt_file[0]
+			filename = os.path.basename(filepath)
+			txt_buffer += '<a href="{}"><h5>{}</h5></a>'.format(filepath, filename)
+		for biom_file in biom_list:
+			filepath = biom_file[0]
+			filename = os.path.basename(filepath)
+			biom_buffer += '<a href="{}"><h5>{}</h5></a>'.format(filepath, filename)
+		# Add the new html to the body (and the pdf)
+		body_string += txt_buffer
+		body_string += biom_buffer
+		pdf_path = secondary_folder_path+'/core_microbiome/'+core_folder+'/core_otu_size.pdf'
+		body_string += '<h5>Graph</h5><a href="{}"><h5>core_otu_size.pdf</h5></a>'.format(pdf_path)
 
 
+
+		#print txt_list.sort(key=int(level))
+
+			#'''txt_buffer += '<a href="file://{0}/core_microbiome/{1}/core_otus_{}.txt"><h5>{}</h5></a>'''
 	return body_string
 
 # Get an image for the bar and area charts to use, return a tuple (barchart.png, areachart.png)
@@ -200,9 +242,6 @@ def anosim_to_html_table(anosim_txt):
 			table_string += '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>\n'.format(split_line[0],split_line[1],split_line[2],split_line[3])
 		table_string += '</table>'
 	return table_string
-
-
-
 
 def main():
 	# Get command line arguments
