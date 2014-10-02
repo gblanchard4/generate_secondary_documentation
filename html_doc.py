@@ -109,8 +109,10 @@ def make_secondary_body(secondary_folder_path):
 			beta_3d += '<a href="file://{0}/beta_diversity/weighted_unifrac_emperor_pcoa_plot/index.html"><h5>Weighted</h5></a>\n'.format(secondary_folder_path)
 		if beta_folder.startswith('ANOSIM_') and '_unweighted' in beta_folder:
 			anosim_unweighted += '<a href="file://{0}/beta_diversity/{1}/anosim_results.txt"><h5>{1}</h5></a>\n'.format(secondary_folder_path, beta_folder)
+			anosim_unweighted += anosim_to_html_table('/{0}/beta_diversity/{1}/anosim_results.txt'.format(secondary_folder_path, beta_folder))
 		if beta_folder.startswith('ANOSIM_') and '_weighted' in beta_folder:
 			anosim_weighted += '<a href="file://{0}/beta_diversity/{1}/anosim_results.txt"><h5>{1}</h5></a>\n'.format(secondary_folder_path, beta_folder)
+			anosim_weighted += anosim_to_html_table('/{0}/beta_diversity/{1}/anosim_results.txt'.format(secondary_folder_path, beta_folder))
 
 	# Add the 2d and 3d html
 	body_string += beta_2d
@@ -123,18 +125,20 @@ def make_secondary_body(secondary_folder_path):
 	# Create the links and graphics for the bar and area charts
 	for taxa_folder in os.listdir(secondary_folder_path+'/taxa_summary/'):
 		#bar_png, area_png = get_taxa_image("{1}/taxa_summary/{0}/taxa_summary_plots/".format(taxa_folder, secondary_folder_path))
-		#print bar_png
-		#print area_png
 		#body_string += '<h3>{0}</h3>\n<a href="file://{1}/taxa_summary/{0}/taxa_summary_plots/bar_charts.html"><img src="{2}"></a>\n<a href="file://{1}/taxa_summary/{0}/taxa_summary_plots/area_charts.html"><img src="{3}"></a>\n'.format(taxa_folder, secondary_folder_path, bar_png, area_png)
 		body_string += '<h3>{0}</h3>\n<a href="file://{1}/taxa_summary/{0}/taxa_summary_plots/bar_charts.html"><h5>Bar Charts</h5></a>\n<a href="file://{1}/taxa_summary/{0}/taxa_summary_plots/area_charts.html"><h5>Area Charts</h5></a>\n'.format(taxa_folder, secondary_folder_path)
 	# Section break
 	body_string += '<hr>\n'	
 
+	# Core microbiome
+	body_string += '<h2>Core microbiome</h2><h5>Something something core microbiome</h4>\n'
+	# Create links to all the core microbiome stuffs
+	for core_folder in os.listdir(secondary_folder_path+'/core_microbiome/'):
+
+
 	return body_string
 
-
 # Get an image for the bar and area charts to use, return a tuple (barchart.png, areachart.png)
-
 def get_taxa_image(taxa_folder_path):
 	# Get barchart png
 	with open('{}bar_charts.html'.format(taxa_folder_path), 'r') as bar:
@@ -158,7 +162,7 @@ def get_beta_image_2d(beta_html):
 def biom_summary_to_html_table(secondary_folder_path):
 	with open(secondary_folder_path+'/table_summary.txt', 'r') as table_file:
 		# Table header string 
-		table_string = '<h2><a href="{}">Biom Table Stats</a></h2>\n<table>'.format(secondary_folder_path)
+		table_string = '<h2><a href="{}">Biom Table Stats</a></h2>\n<table>'.format(secondary_folder_path+'/table_summary.txt')
 		for line in table_file:
 			# Get important information
 			# Number of samples
@@ -187,6 +191,15 @@ def biom_summary_to_html_table(secondary_folder_path):
 		table_string += '</table><hr>\n'
 	return table_string
 
+def anosim_to_html_table(anosim_txt):
+	# Table header string 
+	table_string = '<table>\n'
+	with open(anosim_txt) as anosim_file:
+		for line in anosim_file:
+			split_line = line.rstrip().split('\t')
+			table_string += '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>\n'.format(split_line[0],split_line[1],split_line[2],split_line[3])
+		table_string += '</table>'
+	return table_string
 
 
 
