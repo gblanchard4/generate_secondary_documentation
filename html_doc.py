@@ -2,7 +2,6 @@
 
 import argparse
 import os
-import markdown
 
 __author__ = "Gene Blanchard"
 __email__ = "me@geneblanchard.com"
