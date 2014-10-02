@@ -62,33 +62,23 @@ def make_secondary_body(secondary_folder_path):
 	# Make the heading for the page the analysis folder name
 	body_string += '<h1>{}</h1>\n'.format(os.path.basename(folder_name)) 
 	# Click here to open analysis folder in browser
-	body_string += '<h5><a href="{}">(Click To Manually Browse Analysis Folder)</a></h5><hr>'.format(secondary_folder_path)
-	'''
-	# Key files listing (mapping, biom, tree)
-	mapping_file_path = secondary_folder_path+'/'
-	biom_file_path = 
-	tree_file_path = 
-	key_files ="""
-	<h3>Base Files:</h3>
-	<ul>
-		<li><a href="{}">Mapping File</a></li>
-		<li><a href="{}">Biom File</a></li>
-		<li><a href="{}">Tree File</a></li>
-	</ul>
-	""".format()
-	'''
+	#body_string += '<h5><a href="{}">(Click To Manually Browse Analysis Folder)</a></h5><hr>'.format(secondary_folder_path)
+	# Table of contents
+	body_string += '<h3>Table of contents</h3><a href="#alpha"><h4>Alpha Diversity</h4></a>\n<a href="#beta"><h4>Beta Diversity</h4></a>\n<a href="#taxa"><h4>Taxa Summary</h4></a>\n<a href="#core"><h4>Core Microbiome</h4></a>\n<hr>'
+
+
 	# Biom Stats
 	body_string += biom_summary_to_html_table(secondary_folder_path)
 
 	# Alpha diversity
-	body_string += '<h2>Alpha Diversity</h2><h5>Click on the graph below for an interactive view</h5>\n'
+	body_string += '<a name="alpha"><h2>Alpha Diversity</h2></a><h5>Click on the graph below for an interactive view</h5>\n'
 	# Get an observed species plot to display
 	alpha_graphic = [png for png in os.listdir("{}/alpha_diversity/alpha_rarefaction_plots/average_plots/".format(secondary_folder_path)) if png.startswith('observed_species')][0]
 	alpha_graphic_path = "{}/alpha_diversity/alpha_rarefaction_plots/average_plots/{}".format(secondary_folder_path, alpha_graphic)
 	body_string += '<a href="file://{}/alpha_diversity/alpha_rarefaction_plots/rarefaction_plots.html"><img src="{}"></a><hr>\n'.format(secondary_folder_path,alpha_graphic_path)
 
 	# Beta Diversity
-	body_string += '<h2>Beta Diversity</h2>\n'
+	body_string += '<a name="alpha"><h2>Beta Diversity</h2></a>\n'
 	beta_2d = '<h3>2D Plots</h3><h5>More axes can be seen by clicking on the plots</h5>\n'
 	beta_3d = '<h3>3D Plots</h3><h5>Follow the link for the Emperor 3D viewer</h5>\n'
 	anosim = '<h3>ANOSIM Analysis</h3><h5>ANOSIM is a method that tests whether two or more groups of samples are significantly different.</h5>\n'
@@ -121,7 +111,7 @@ def make_secondary_body(secondary_folder_path):
 	body_string += anosim + anosim_unweighted + anosim_weighted +"<hr>\n"
 	
 	# Taxa summary
-	body_string += '<h2>Taxa Summary</h2><h5>Follow the links for a taxa breakdown of your samples</h4>\n'
+	body_string += '<a name="taxa"><h2>Taxa Summary</h2></a><h5>Follow the links for a taxa breakdown of your samples</h4>\n'
 	# Create the links and graphics for the bar and area charts
 	for taxa_folder in os.listdir(secondary_folder_path+'/taxa_summary/'):
 		#bar_png, area_png = get_taxa_image("{1}/taxa_summary/{0}/taxa_summary_plots/".format(taxa_folder, secondary_folder_path))
@@ -130,16 +120,17 @@ def make_secondary_body(secondary_folder_path):
 	# Section break
 	body_string += '<hr>\n'	
 
+
 	# Core microbiome
-	body_string += '<h2>Core microbiome</h2><h5>Something something core microbiome</h5>\n'
+	body_string += '<a name="core"><h2>Core microbiome</h2></a><h5>Something something core microbiome</h5>\n'
 	# Create links to all the core microbiome stuffs
 	for core_folder in list_subdirectories(secondary_folder_path+'/core_microbiome/'):
 		# Folder name
-		body_string += '<h4>{}</h4>'.format(core_folder)
+		body_string += '<h4>{}</h4>\n<table><tr>'.format(core_folder)
 		# string buffers for txt & biom files
-		txt_buffer = "<h5>Text Files</h5>\n"
+		txt_buffer = "<table><tr><td>Text Files</td></tr><tr><td>Percentage</td>\n"
 		txt_list = []
-		biom_buffer = "<h5>Biom Files</h5>\n"
+		biom_buffer = "<table><tr><td>Biom Files</td></tr><tr><td>Percentage</td>\n"
 		biom_list = []
 		# Traverse the core folder for all its children
 		for child_file in os.listdir(secondary_folder_path+'/core_microbiome/'+core_folder):
@@ -157,21 +148,22 @@ def make_secondary_body(secondary_folder_path):
 		# Sort the list based on the level
 		txt_list = sorted(txt_list, key= lambda txt: txt[1] )
 		biom_list = sorted(biom_list, key= lambda biom: biom[1] )
-
 		# Make some html
 		for txt_file in txt_list:
 			filepath = txt_file[0]
+			file_level = str(txt_file[1])
 			filename = os.path.basename(filepath)
-			txt_buffer += '<a href="{}"><h5>{}</h5></a>'.format(filepath, filename)
+			txt_buffer += '<td><a href="{}">{}</a></td>'.format(filepath, file_level)
 		for biom_file in biom_list:
 			filepath = biom_file[0]
+			file_level = biom_file[1]
 			filename = os.path.basename(filepath)
-			biom_buffer += '<a href="{}"><h5>{}</h5></a>'.format(filepath, filename)
+			biom_buffer += '<td><a href="{}">{}</a></td>'.format(filepath, file_level)
 		# Add the new html to the body (and the pdf)
-		body_string += txt_buffer
-		body_string += biom_buffer
+		body_string += txt_buffer+'</tr></table>\n'
+		body_string += biom_buffer+'</tr></table>\n'
 		pdf_path = secondary_folder_path+'/core_microbiome/'+core_folder+'/core_otu_size.pdf'
-		body_string += '<h5>Graph</h5><a href="{}"><h5>core_otu_size.pdf</h5></a>'.format(pdf_path)
+		body_string += '<table><tr><td>Core Graph</td></tr><tr><td>PDF</td><td><a href="{}">core_otu_size.pdf</a></td></tr></table>\n'.format(pdf_path)
 
 
 
