@@ -67,6 +67,8 @@ RootFolder
 
 ```
 # Usage 
-`html_doc.py -i RootFolder`
-
+`html_doc.py -i RootFolder` 
 This will create a file called `overview.html` in the *RootFolder* and each *SecondaryFolder*
+## --noroot
+`html_doc.py -i SecondaryFolder --noroot` 
+If you pass this flag, you can input a single secondary analysis folder
