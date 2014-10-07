@@ -8,8 +8,8 @@ __email__ = "me@geneblanchard.com"
 
 '''
 DOC:
- 
 
+See README.md
 '''
 
 # Template for the html file
@@ -128,9 +128,9 @@ def make_secondary_body(secondary_folder_path):
 		# Folder name
 		body_string += '<h4>{}</h4>\n<table><tr>'.format(core_folder)
 		# string buffers for txt & biom files
-		txt_buffer = "<table><tr><td>Text Files</td></tr><tr><td>Percentage</td>\n"
+		txt_buffer = "<tr><td>Text Files</td>\n"
 		txt_list = []
-		biom_buffer = "<table><tr><td>Biom Files</td></tr><tr><td>Percentage</td>\n"
+		biom_buffer = "<tr><td>Biom Files</td>\n"
 		biom_list = []
 		# Traverse the core folder for all its children
 		for child_file in os.listdir(secondary_folder_path+'/core_microbiome/'+core_folder):
@@ -160,16 +160,11 @@ def make_secondary_body(secondary_folder_path):
 			filename = os.path.basename(filepath)
 			biom_buffer += '<td><a href="{}">{}</a></td>'.format(filepath, file_level)
 		# Add the new html to the body (and the pdf)
-		body_string += txt_buffer+'</tr></table>\n'
-		body_string += biom_buffer+'</tr></table>\n'
+		#get the span length for the graph cell
+		span_length = txt_buffer.count('</td>')
 		pdf_path = secondary_folder_path+'/core_microbiome/'+core_folder+'/core_otu_size.pdf'
-		body_string += '<table><tr><td>Core Graph</td></tr><tr><td>PDF</td><td><a href="{}">core_otu_size.pdf</a></td></tr></table>\n'.format(pdf_path)
-
-
-
-		#print txt_list.sort(key=int(level))
-
-			#'''txt_buffer += '<a href="file://{0}/core_microbiome/{1}/core_otus_{}.txt"><h5>{}</h5></a>'''
+		pdf_buffer = '<tr><td>Graph</td><td colspan="{}"><a href="{}">core_otu_size.pdf</a></td></tr>\n'.format(span_length,pdf_path)
+		body_string += '<table>{}</tr>{}</tr><tr>{}</tr></table>'.format(txt_buffer, biom_buffer, pdf_buffer)
 	return body_string
 
 # Get an image for the bar and area charts to use, return a tuple (barchart.png, areachart.png)
@@ -240,10 +235,14 @@ def main():
 	parser = argparse.ArgumentParser(description='Calculate stats on the input fastqs')
 	# Secondary analysis directory generated with automated script
 	parser.add_argument('-i','--input',dest='input', help='The secondary analysis folder to generate documentation on', required=True)
+	# No root directory flag
+	parser.add_argument('--noroot',dest='noroot', action='store_true', help='Do not generate a main page, child directory passed only')
+
 	# Parse arguments
 	args = parser.parse_args()
 	# Set arguments 
 	analysis_folder = os.path.abspath(args.input)
+	noroot = args.noroot
 
 	# Error checking
 	ERROR = False
@@ -253,16 +252,22 @@ def main():
 		ERROR = True
 
 
+	# Mainpage is only if noroot == False
+	if noroot:
+		# Write the secondary pages
+		with open(analysis_folder+'/overview.html', 'w') as html_file:
+				html_file.write(make_html(analysis_folder, make_secondary_body(analysis_folder)))
+	else:
+		# Write main overview page
+		with open(analysis_folder+'/overview.html', 'w') as html_file:
+			html_file.write(make_html(analysis_folder, make_overview_body(analysis_folder)))
 
-	# Write main overview page
-	with open(analysis_folder+'/overview.html', 'w') as html_file:
-		html_file.write(make_html(analysis_folder, make_overview_body(analysis_folder)))
-
-	# Write the secondary pages
-	for secondary_folder in list_subdirectories(analysis_folder):
-		path = analysis_folder+'/'+secondary_folder
-		with open(path+'/overview.html', 'w') as html_file:
-			html_file.write(make_html(path, make_secondary_body(analysis_folder+'/'+secondary_folder)))
+		# Write the secondary pages
+		for secondary_folder in list_subdirectories(analysis_folder):
+			path = analysis_folder+'/'+secondary_folder
+			with open(path+'/overview.html', 'w') as html_file:
+				html_file.write(make_html(path, make_secondary_body(analysis_folder+'/'+secondary_folder)))
+	
 
 if __name__ == '__main__':
 	main()
