@@ -8,7 +8,7 @@ I created this to make looking at qiime analysis data easier. It can be pretty i
 
 
 # Expectations  
-Right now the script expects a certain folder structure, I will try to generalize it more in the future.
+Right now the script expects a certain folder structure, I will try to generalize it more in the future. Need to catch IOError for ANOSIM folders
 
 ```
 RootFolder
