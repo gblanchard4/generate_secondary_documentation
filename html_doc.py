@@ -223,11 +223,15 @@ def biom_summary_to_html_table(secondary_folder_path):
 def anosim_to_html_table(anosim_txt):
 	# Table header string 
 	table_string = '<table>\n'
-	with open(anosim_txt) as anosim_file:
-		for line in anosim_file:
-			split_line = line.rstrip().split('\t')
-			table_string += '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>\n'.format(split_line[0],split_line[1],split_line[2],split_line[3])
-		table_string += '</table>'
+	try:
+		with open(anosim_txt) as anosim_file:
+			for line in anosim_file:
+				split_line = line.rstrip().split('\t')
+				table_string += '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>\n'.format(split_line[0],split_line[1],split_line[2],split_line[3])
+			table_string += '</table>'
+	except IOError:
+		table_string += '<tr><td>File Not Found</td></tr></table>'
+
 	return table_string
 
 def main():
