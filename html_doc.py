@@ -78,7 +78,7 @@ def make_secondary_body(secondary_folder_path):
 	body_string += '<a href="file://{}/alpha_diversity/alpha_rarefaction_plots/rarefaction_plots.html"><img src="{}"></a><hr>\n'.format(secondary_folder_path,alpha_graphic_path)
 
 	# Beta Diversity
-	body_string += '<a name="alpha"><h2>Beta Diversity</h2></a>\n'
+	body_string += '<a name="beta"><h2>Beta Diversity</h2></a>\n'
 	beta_2d = '<h3>2D Plots</h3><h5>More axes can be seen by clicking on the plots</h5>\n'
 	beta_3d = '<h3>3D Plots</h3><h5>Follow the link for the Emperor 3D viewer</h5>\n'
 	anosim = '<h3>ANOSIM Analysis</h3><h5>ANOSIM is a method that tests whether two or more groups of samples are significantly different.</h5>\n'
