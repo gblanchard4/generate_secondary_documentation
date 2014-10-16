@@ -42,7 +42,6 @@ def make_overview_body(analysis_folder):
 	body_string += folder_header
 	# Add the secondary folders to the string buffer
 	for secondary_folder in list_subdirectories(analysis_folder):
-		#filepath =  analysis_folder+'/'+secondary_folder
 		folder_link ='\t\t<h2><a href="{}">{}</a></h2>\n'.format(secondary_folder+'/overview.html', secondary_folder)
 		body_string+=folder_link
 	return body_string
@@ -61,11 +60,9 @@ def make_secondary_body(secondary_folder_path):
 	folder_name = os.path.basename(secondary_folder_path)
 	# Make the heading for the page the analysis folder name
 	body_string += '<h1>{}</h1>\n'.format(os.path.basename(folder_name)) 
-	# Click here to open analysis folder in browser
-	#body_string += '<h5><a href="{}">(Click To Manually Browse Analysis Folder)</a></h5><hr>'.format(secondary_folder_path)
+
 	# Table of contents
 	body_string += '<h3>Table of contents</h3><a href="#alpha"><h4>Alpha Diversity</h4></a>\n<a href="#beta"><h4>Beta Diversity</h4></a>\n<a href="#taxa"><h4>Taxa Summary</h4></a>\n<a href="#core"><h4>Core Microbiome</h4></a>\n<hr>'
-
 
 	# Biom Stats
 	body_string += biom_summary_to_html_table(secondary_folder_path)
@@ -74,8 +71,8 @@ def make_secondary_body(secondary_folder_path):
 	body_string += '<a name="alpha"><h2>Alpha Diversity</h2></a><h5>Click on the graph below for an interactive view</h5>\n'
 	# Get an observed species plot to display
 	alpha_graphic = [png for png in os.listdir("{}/alpha_diversity/alpha_rarefaction_plots/average_plots/".format(secondary_folder_path)) if png.startswith('observed_species')][0]
-	alpha_graphic_path = "{}/alpha_diversity/alpha_rarefaction_plots/average_plots/{}".format(secondary_folder_path, alpha_graphic)
-	body_string += '<a href="file://{}/alpha_diversity/alpha_rarefaction_plots/rarefaction_plots.html"><img src="{}"></a><hr>\n'.format(secondary_folder_path,alpha_graphic_path)
+	alpha_graphic_path = "./alpha_diversity/alpha_rarefaction_plots/average_plots/{}".format(alpha_graphic)
+	body_string += '<a href="./alpha_diversity/alpha_rarefaction_plots/rarefaction_plots.html"><img src="{}"></a><hr>\n'.format(alpha_graphic_path)
 
 	# Beta Diversity
 	body_string += '<a name="beta"><h2>Beta Diversity</h2></a>\n'
@@ -85,23 +82,25 @@ def make_secondary_body(secondary_folder_path):
 	anosim_unweighted = '<h4>ANOSIM Unweighted</h4>\n'
 	anosim_weighted = '<h4>ANOSIM Weighted</h4>\n'
 	for beta_folder in os.listdir(secondary_folder_path+"/beta_diversity/"):
+		
 		# For the 2d plots
 		if beta_folder.startswith('2d_unweighted'):
 			beta_png = get_beta_image_2d("{0}/beta_diversity/2d_unweighted_unifrac_plots/unweighted_unifrac_pc_2D_PCoA_plots.html".format(secondary_folder_path))
-			beta_2d += '<h4>Unweighted</h4><a href="file://{0}/beta_diversity/2d_unweighted_unifrac_plots/unweighted_unifrac_pc_2D_PCoA_plots.html"><img src="file://{0}/beta_diversity/2d_unweighted_unifrac_plots/{1}"></a>\n'.format(secondary_folder_path, beta_png)
+			beta_2d += '<h4>Unweighted</h4><a href="./beta_diversity/2d_unweighted_unifrac_plots/unweighted_unifrac_pc_2D_PCoA_plots.html"><img src="./beta_diversity/2d_unweighted_unifrac_plots/{}"></a>\n'.format(beta_png)
 		if beta_folder.startswith('2d_weighted'):
 			beta_png = get_beta_image_2d("{0}/beta_diversity/2d_weighted_unifrac_plots/weighted_unifrac_pc_2D_PCoA_plots.html".format(secondary_folder_path))
-			beta_2d += '<h4>Weighted</h4><a href="file://{0}/beta_diversity/2d_weighted_unifrac_plots/weighted_unifrac_pc_2D_PCoA_plots.html"><img src="file://{0}/beta_diversity/2d_weighted_unifrac_plots/{1}"></a>\n'.format(secondary_folder_path, beta_png)
+			beta_2d += '<h4>Weighted</h4><a href="./beta_diversity/2d_weighted_unifrac_plots/weighted_unifrac_pc_2D_PCoA_plots.html"><img src="./beta_diversity/2d_weighted_unifrac_plots/{}"></a>\n'.format(beta_png)
+		
 		# For the 3d Emperor plots
 		if '_emperor_' in beta_folder and beta_folder.startswith('unweighted_'):
-			beta_3d += '<a href="file://{0}/beta_diversity/unweighted_unifrac_emperor_pcoa_plot/index.html"><h5>Unweighted</h5></a>\n'.format(secondary_folder_path)
+			beta_3d += '<a href="./beta_diversity/unweighted_unifrac_emperor_pcoa_plot/index.html"><h5>Unweighted</h5></a>\n'
 		if '_emperor_' in beta_folder and beta_folder.startswith('weighted_'):
-			beta_3d += '<a href="file://{0}/beta_diversity/weighted_unifrac_emperor_pcoa_plot/index.html"><h5>Weighted</h5></a>\n'.format(secondary_folder_path)
+			beta_3d += '<a href="./beta_diversity/weighted_unifrac_emperor_pcoa_plot/index.html"><h5>Weighted</h5></a>\n'
 		if beta_folder.startswith('ANOSIM_') and '_unweighted' in beta_folder:
-			anosim_unweighted += '<a href="file://{0}/beta_diversity/{1}/anosim_results.txt"><h5>{1}</h5></a>\n'.format(secondary_folder_path, beta_folder)
+			anosim_unweighted += '<a href="./beta_diversity/{0}/anosim_results.txt"><h5>{0}</h5></a>\n'.format(beta_folder)
 			anosim_unweighted += anosim_to_html_table('/{0}/beta_diversity/{1}/anosim_results.txt'.format(secondary_folder_path, beta_folder))
 		if beta_folder.startswith('ANOSIM_') and '_weighted' in beta_folder:
-			anosim_weighted += '<a href="file://{0}/beta_diversity/{1}/anosim_results.txt"><h5>{1}</h5></a>\n'.format(secondary_folder_path, beta_folder)
+			anosim_weighted += '<a href="./beta_diversity/{0}/anosim_results.txt"><h5>{0}</h5></a>\n'.format(beta_folder)
 			anosim_weighted += anosim_to_html_table('/{0}/beta_diversity/{1}/anosim_results.txt'.format(secondary_folder_path, beta_folder))
 
 	# Add the 2d and 3d html
@@ -116,7 +115,7 @@ def make_secondary_body(secondary_folder_path):
 	for taxa_folder in os.listdir(secondary_folder_path+'/taxa_summary/'):
 		#bar_png, area_png = get_taxa_image("{1}/taxa_summary/{0}/taxa_summary_plots/".format(taxa_folder, secondary_folder_path))
 		#body_string += '<h3>{0}</h3>\n<a href="file://{1}/taxa_summary/{0}/taxa_summary_plots/bar_charts.html"><img src="{2}"></a>\n<a href="file://{1}/taxa_summary/{0}/taxa_summary_plots/area_charts.html"><img src="{3}"></a>\n'.format(taxa_folder, secondary_folder_path, bar_png, area_png)
-		body_string += '<h3>{0}</h3>\n<a href="file://{1}/taxa_summary/{0}/taxa_summary_plots/bar_charts.html"><h5>Bar Charts</h5></a>\n<a href="file://{1}/taxa_summary/{0}/taxa_summary_plots/area_charts.html"><h5>Area Charts</h5></a>\n'.format(taxa_folder, secondary_folder_path)
+		body_string += '<h3>{0}</h3>\n<a href="./taxa_summary/{0}/taxa_summary_plots/bar_charts.html"><h5>Bar Charts</h5></a>\n<a href="./taxa_summary/{0}/taxa_summary_plots/area_charts.html"><h5>Area Charts</h5></a>\n'.format(taxa_folder)
 	# Section break
 	body_string += '<hr>\n'	
 
@@ -138,12 +137,12 @@ def make_secondary_body(secondary_folder_path):
 			# Text files
 			if child_file.split('.')[1] == 'txt':
 				level = int(child_file.rstrip('.txt').split('_')[-1])
-				txt_tuple = secondary_folder_path+'/core_microbiome/'+core_folder+'/'+child_file, level
+				txt_tuple = './core_microbiome/'+core_folder+'/'+child_file, level
 				txt_list.append(txt_tuple)
 			# Biom files
 			if child_file.split('.')[1] == 'biom':
 				level = int(child_file.rstrip('.biom').split('_')[-1])
-				biom_tuple = secondary_folder_path+'/core_microbiome/'+core_folder+'/'+child_file, level
+				biom_tuple = './core_microbiome/'+core_folder+'/'+child_file, level
 				biom_list.append(biom_tuple)
 		# Sort the list based on the level
 		txt_list = sorted(txt_list, key= lambda txt: txt[1] )
@@ -191,7 +190,7 @@ def get_beta_image_2d(beta_html):
 def biom_summary_to_html_table(secondary_folder_path):
 	with open(secondary_folder_path+'/table_summary.txt', 'r') as table_file:
 		# Table header string 
-		table_string = '<h2><a href="{}">Biom Table Stats</a></h2>\n<table>'.format(secondary_folder_path+'/table_summary.txt')
+		table_string = '<h2><a href="{}">Biom Table Stats</a></h2>\n<table>'.format(os.path.basename(secondary_folder_path)+'/table_summary.txt')
 		for line in table_file:
 			# Get important information
 			# Number of samples
