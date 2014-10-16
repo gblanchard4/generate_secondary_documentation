@@ -42,8 +42,8 @@ def make_overview_body(analysis_folder):
 	body_string += folder_header
 	# Add the secondary folders to the string buffer
 	for secondary_folder in list_subdirectories(analysis_folder):
-		filepath =  analysis_folder+'/'+secondary_folder
-		folder_link ='\t\t<h2><a href="{}">{}</a></h2>\n'.format(filepath+'/overview.html', secondary_folder)
+		#filepath =  analysis_folder+'/'+secondary_folder
+		folder_link ='\t\t<h2><a href="{}">{}</a></h2>\n'.format(secondary_folder+'/overview.html', secondary_folder)
 		body_string+=folder_link
 	return body_string
 
