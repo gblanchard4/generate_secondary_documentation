@@ -68,7 +68,11 @@ def make_secondary_body(secondary_folder_path):
 	body_string += biom_summary_to_html_table(secondary_folder_path)
 
 	# Alpha diversity
-	body_string += '<a name="alpha"><h2>Alpha Diversity</h2></a><h5>Click on the graph below for an interactive view</h5>\n'
+	body_string += '<a name="alpha"><h2>Alpha Diversity</h2></a>\n'
+	# Descriptor
+	body_string += '<h4>Alpha Diversity describes the he diversity within a sample.</h4>\n'
+	# Instructions
+	body_string+= '<h5>Click on the graph below for an interactive view</h5>\n'
 	# Get an observed species plot to display
 	alpha_graphic = [png for png in os.listdir("{}/alpha_diversity/alpha_rarefaction_plots/average_plots/".format(secondary_folder_path)) if png.startswith('observed_species')][0]
 	alpha_graphic_path = "./alpha_diversity/alpha_rarefaction_plots/average_plots/{}".format(alpha_graphic)
@@ -76,7 +80,11 @@ def make_secondary_body(secondary_folder_path):
 
 	# Beta Diversity
 	body_string += '<a name="beta"><h2>Beta Diversity</h2></a>\n'
+	# Descriptor
+	body_string += '<h4>Beta Diversity describes the diversity between samples.</h4>\n'
+	# Instructions
 	beta_2d = '<h3>2D Plots</h3><h5>More axes can be seen by clicking on the plots</h5>\n'
+	# Instructions
 	beta_3d = '<h3>3D Plots</h3><h5>Follow the link for the Emperor 3D viewer</h5>\n'
 	anosim = '<h3>ANOSIM Analysis</h3><h5>ANOSIM is a method that tests whether two or more groups of samples are significantly different.</h5>\n'
 	anosim_unweighted = '<h4>ANOSIM Unweighted</h4>\n'
@@ -110,7 +118,11 @@ def make_secondary_body(secondary_folder_path):
 	body_string += anosim + anosim_unweighted + anosim_weighted +"<hr>\n"
 	
 	# Taxa summary
-	body_string += '<a name="taxa"><h2>Taxa Summary</h2></a><h5>Follow the links for a taxa breakdown of your samples</h4>\n'
+	body_string += '<a name="taxa"><h2>Taxa Summary</h2></a>\n'
+	# Descriptor
+	body_string += '<h4>Taxanomic charts that show the makeup of each sample for Phylum through Species levels.</h4>\n'
+	# Instructions
+	body_string += '<h5>Follow the links for a taxa breakdown of your samples</h4>\n'
 	# Create the links and graphics for the bar and area charts
 	for taxa_folder in os.listdir(secondary_folder_path+'/taxa_summary/'):
 		#bar_png, area_png = get_taxa_image("{1}/taxa_summary/{0}/taxa_summary_plots/".format(taxa_folder, secondary_folder_path))
