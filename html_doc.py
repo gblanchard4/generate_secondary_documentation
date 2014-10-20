@@ -77,7 +77,11 @@ def make_secondary_body(secondary_folder_path):
 	# Get an observed species plot to display
 	alpha_graphic = [png for png in os.listdir("{}/alpha_diversity/alpha_rarefaction_plots/average_plots/".format(secondary_folder_path)) if png.startswith('observed_species')][0]
 	alpha_graphic_path = "./alpha_diversity/alpha_rarefaction_plots/average_plots/{}".format(alpha_graphic)
-	body_string += '<a href="./alpha_diversity/alpha_rarefaction_plots/rarefaction_plots.html"><img src="{}"></a><hr>\n'.format(alpha_graphic_path)
+	body_string += '<a href="./alpha_diversity/alpha_rarefaction_plots/rarefaction_plots.html"><img src="{}"></a>\n'.format(alpha_graphic_path)
+	# Alpha div collated
+	body_string += alpha_div_collated_to_html_table(secondary_folder_path)
+	# Seperator
+	body_string += '<hr>'
 
 	# Beta Diversity
 	body_string += '<a name="beta"><h2>Beta Diversity</h2></a>\n'
@@ -257,7 +261,6 @@ def alpha_div_collated_to_html_table(secondary_folder_path):
 		category = folder.split('_')[-1]
 		# Add the folder to the dictionary with the category as the key
 		category_dict[category].append(folder)
-	print category_dict
 	# Make html tables for each file per category
 	alpha_div_html = "<h4>Alpha Div Collated</h4>\n"
 	for key in category_dict.keys():
@@ -269,7 +272,6 @@ def alpha_div_collated_to_html_table(secondary_folder_path):
 		for metric in category_dict[key]:
 			metric_name = metric.rsplit('_',1)[0]
 			metric_box_plots = './alpha_diversity/alpha_div_collated/{}/{}_boxplots.pdf'.format(metric, key)
-			print metric_box_plots
 			# Open the stats file
 			stats_file = '{}/alpha_diversity/alpha_div_collated/{}/{}_stats.txt'.format(secondary_folder_path, metric, key)
 			with open(stats_file, 'r') as stats:
@@ -284,7 +286,7 @@ def alpha_div_collated_to_html_table(secondary_folder_path):
 		# End table
 		table_string += '</table>'
 		alpha_div_html += table_string
-	print alpha_div_html
+	return alpha_div_html
 
 
 def main():
