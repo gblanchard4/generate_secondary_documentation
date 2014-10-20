@@ -2,6 +2,7 @@
 
 import argparse
 import os
+from collections import defaultdict
 
 __author__ = "Gene Blanchard"
 __email__ = "me@geneblanchard.com"
@@ -244,6 +245,47 @@ def anosim_to_html_table(anosim_txt):
 		table_string += '<tr><td>File Not Found</td></tr></table>'
 
 	return table_string
+
+def alpha_div_collated_to_html_table(secondary_folder_path):
+	# Path to alpha div collated
+	alpha_div_collated_path = secondary_folder_path+'/alpha_diversity/alpha_div_collated/'
+	secondary_basename = os.path.basename(secondary_folder_path)
+	# Collection of categories in the folder
+	category_dict = defaultdict(list)
+	for folder in list_subdirectories(alpha_div_collated_path):
+		# Split the name on the last element 
+		category = folder.split('_')[-1]
+		# Add the folder to the dictionary with the category as the key
+		category_dict[category].append(folder)
+	print category_dict
+	# Make html tables for each file per category
+	alpha_div_html = "<h4>Alpha Div Collated</h4>\n"
+	for key in category_dict.keys():
+		# Filename 
+		table_string = '<h5>{}</h5>\n<table>\n'.format(key)
+		# Table Header
+		table_string += '<tr><td>Metric</td><td>Group1</td><td>Group2</td><td>Group1 mean</td><td>Group1 std</td><td>Group2 mean</td><td>Group2 std</td><td>t stat</td><td>p-value</td></tr>\n'
+
+		for metric in category_dict[key]:
+			metric_name = metric.rsplit('_',1)[0]
+			metric_box_plots = './alpha_diversity/alpha_div_collated/{}/{}_boxplots.pdf'.format(metric, key)
+			print metric_box_plots
+			# Open the stats file
+			stats_file = '{}/alpha_diversity/alpha_div_collated/{}/{}_stats.txt'.format(secondary_folder_path, metric, key)
+			with open(stats_file, 'r') as stats:
+				for line in stats:
+					# Header line
+					if line.startswith("Group1"):
+						pass
+					# Data
+					else:
+						group1, group2, group1mean, group1std, group2mean, group2std, tstat, pvalue = line.rstrip('\n').split('\t')
+						table_string += '<tr><td><a href="{}">{}</a></td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>\n'.format(metric_box_plots, metric_name, group1, group2, group1mean, group1std, group2mean, group2std, tstat, pvalue)
+		# End table
+		table_string += '</table>'
+		alpha_div_html += table_string
+	print alpha_div_html
+
 
 def main():
 	# Get command line arguments
