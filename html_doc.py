@@ -21,7 +21,7 @@ def make_html(folder_name, body):
 	<head>
 		<meta charset="UTF-8">
 		<title>{}</title>
-		<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/gblanchard4/sublimetext-markdown-preview/master/markdown.css">
+		<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/gblanchard4/generate_secondary_documentation/master/markdown.css">
 	</head>
 	<body>
 	<article class="markdown-body">
