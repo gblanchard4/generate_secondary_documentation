@@ -141,10 +141,9 @@ def make_secondary_body(secondary_folder_path):
 	# Descriptor
 	body_string += '<h4>Tests whether any of the OTUs in an OTU table are significantly associated with a category in the category mapping file.</h4>\n'
 	# Instructions
-	body_string += '<h5>These files can be very large, this is a quick overview of the first 10 lines</h4>\n'
+	# body_string += '<h5>These files can be very large, this is a quick overview of the first 10 lines</h4>\n'
 	for taxa_folder in os.listdir(secondary_folder_path+'/taxa_summary/'):
 		# ANOVA
-
 		if os.path.isfile(secondary_folder_path+'/taxa_summary/'+taxa_folder+'/ANOVA.txt'):
 			body_string += '<h4>{}</h4>\n'.format(taxa_folder)
 			anova_file = '{}/taxa_summary/{}/ANOVA.txt'.format(secondary_folder_path, taxa_folder)
@@ -152,30 +151,59 @@ def make_secondary_body(secondary_folder_path):
 				# File link
 				anova_html = '<a href="./{}/taxa_summary/{}/ANOVA.txt"><h5>ANOVA</h5></a>\n'.format(secondary_folder_path, taxa_folder)
 				# Start table
-				anova_html += '<div style="height:400px;overflow:auto;"><table>'
+				anova_html += '<div style="height:25em;overflow:auto;"><table>'
 				for index,line in enumerate(anoava):
 					if index == 0:
 						# Header
-						anova_html += '<th>'
-						split_line= line.split('\t')
+						anova_html += '<tr>'
+						split_line= line.rstrip('\n').split('\t')
 						for cell in split_line:
 							# Add cell to row
-							anova_html += '<td>{}</td>'.format(cell)
+							anova_html += '<td nowrap>{}</td>'.format(cell)
 						# End row
-						anova_html += '</th>'
+						anova_html += '</tr>'
 					else:
 						# Start row
 						anova_html += '<tr>'
 						split_line= line.split('\t')
 						for cell in split_line:
 							# Add cell to row
-							anova_html += '<td>{}</td>'.format(cell)
+							anova_html += '<td nowrap>{}</td>'.format(cell)
 						# End row
 						anova_html += '</tr>'
-						
 				# End table
 				anova_html += '</table></div>'
 				body_string += anova_html
+		# G_test	
+		if os.path.isfile(secondary_folder_path+'/taxa_summary/'+taxa_folder+'/g_test.txt'):
+			gtest_file = '{}/taxa_summary/{}/g_test.txt'.format(secondary_folder_path, taxa_folder)
+			with open(gtest_file, 'r') as gtest:
+				# File link
+				gtest_html = '<a href="./{}/taxa_summary/{}/g_test.txt"><h5>G Test</h5></a>\n'.format(secondary_folder_path, taxa_folder)
+				# Start table
+				gtest_html += '<div style="height:25em;overflow:auto;"><table>'
+				for index,line in enumerate(gtest):
+					if index == 0:
+						# Header
+						gtest_html += '<tr>'
+						split_line= line.rstrip('\n').split('\t')
+						for cell in split_line:
+							# Add cell to row
+							gtest_html += '<td nowrap>{}</td>'.format(cell)
+						# End row
+						gtest_html += '</tr>'
+					else:
+						# Start row
+						gtest_html += '<tr>'
+						split_line= line.split('\t')
+						for cell in split_line:
+							# Add cell to row
+							gtest_html += '<td nowrap>{}</td>'.format(cell)
+						# End row
+						gtest_html += '</tr>'
+				# End table
+				gtest_html += '</table></div>'
+				body_string += gtest_html
 
 	# Core microbiome
 	body_string += '<a name="core"><h2>Core microbiome</h2></a><h5>Something something core microbiome</h5>\n'
@@ -305,7 +333,7 @@ def alpha_div_collated_to_html_table(secondary_folder_path):
 	alpha_div_html = "<h4>Alpha Div Collated</h4>\n"
 	for key in category_dict.keys():
 		# Filename 
-		table_string = '<h5>{}</h5>\n<table>\n'.format(key)
+		table_string = '<h5>{}</h5>\n<div style="height:20em;overflow:auto;width:auto;"><table>\n'.format(key)
 		# Table Header
 		table_string += '<tr><td>Metric</td><td>Group1</td><td>Group2</td><td>Group1 mean</td><td>Group1 std</td><td>Group2 mean</td><td>Group2 std</td><td>t stat</td><td>p-value</td></tr>\n'
 
@@ -324,7 +352,7 @@ def alpha_div_collated_to_html_table(secondary_folder_path):
 						group1, group2, group1mean, group1std, group2mean, group2std, tstat, pvalue = line.rstrip('\n').split('\t')
 						table_string += '<tr><td><a href="{}">{}</a></td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>\n'.format(metric_box_plots, metric_name, group1, group2, group1mean, group1std, group2mean, group2std, tstat, pvalue)
 		# End table
-		table_string += '</table>'
+		table_string += '</table></div>'
 		alpha_div_html += table_string
 	return alpha_div_html
 
