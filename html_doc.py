@@ -21,7 +21,7 @@ def make_html(folder_name, body):
 	<head>
 		<meta charset="UTF-8">
 		<title>{}</title>
-		<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/gblanchard4/generate_secondary_documentation/master/simple.css">
+		<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/gblanchard4/generate_secondary_documentation/master/simple90.css">
 	</head>
 	<body>
 	<article class="markdown-body">
@@ -153,7 +153,7 @@ def make_secondary_body(secondary_folder_path):
 				# Start table
 				anova_html += '<div style="height:25em;overflow:auto;"><table>'
 				for index,line in enumerate(anoava):
-					if index == 0:
+					if index == 
 						# Header
 						anova_html += '<tr>'
 						split_line= line.rstrip('\n').split('\t')
