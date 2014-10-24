@@ -153,7 +153,7 @@ def make_secondary_body(secondary_folder_path):
 				# Start table
 				anova_html += '<div style="height:25em;overflow:auto;"><table>'
 				for index,line in enumerate(anoava):
-					if index == 
+					if index == 0:
 						# Header
 						anova_html += '<tr>'
 						split_line= line.rstrip('\n').split('\t')
