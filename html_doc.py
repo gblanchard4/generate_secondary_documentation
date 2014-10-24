@@ -132,10 +132,50 @@ def make_secondary_body(secondary_folder_path):
 	for taxa_folder in os.listdir(secondary_folder_path+'/taxa_summary/'):
 		#bar_png, area_png = get_taxa_image("{1}/taxa_summary/{0}/taxa_summary_plots/".format(taxa_folder, secondary_folder_path))
 		#body_string += '<h3>{0}</h3>\n<a href="file://{1}/taxa_summary/{0}/taxa_summary_plots/bar_charts.html"><img src="{2}"></a>\n<a href="file://{1}/taxa_summary/{0}/taxa_summary_plots/area_charts.html"><img src="{3}"></a>\n'.format(taxa_folder, secondary_folder_path, bar_png, area_png)
-		body_string += '<h3>{0}</h3>\n<a href="./taxa_summary/{0}/taxa_summary_plots/bar_charts.html"><h5>Bar Charts</h5></a>\n<a href="./taxa_summary/{0}/taxa_summary_plots/area_charts.html"><h5>Area Charts</h5></a>\n'.format(taxa_folder)
+		body_string += '<h3>{0}</h3><h5><p><a href="./taxa_summary/{0}/taxa_summary_plots/bar_charts.html">Bar Charts</a> | <a href="./taxa_summary/{0}/taxa_summary_plots/area_charts.html">Area Charts</a></h5></p>\n'.format(taxa_folder)
 	# Section break
 	body_string += '<hr>\n'	
 
+	# Otu category sig
+	body_string += '<a name="otu"><h2><OTU Category Significance/h2></a>\n'
+	# Descriptor
+	body_string += '<h4>Tests whether any of the OTUs in an OTU table are significantly associated with a category in the category mapping file.</h4>\n'
+	# Instructions
+	body_string += '<h5>These files can be very large, this is a quick overview of the first 10 lines</h4>\n'
+	for taxa_folder in os.listdir(secondary_folder_path+'/taxa_summary/'):
+		# ANOVA
+
+		if os.path.isfile(secondary_folder_path+'/taxa_summary/'+taxa_folder+'/ANOVA.txt'):
+			body_string += '<h4>{}</h4>\n'.format(taxa_folder)
+			anova_file = '{}/taxa_summary/{}/ANOVA.txt'.format(secondary_folder_path, taxa_folder)
+			with open(anova_file, 'r') as anoava:
+				# File link
+				anova_html = '<a href="./{}/taxa_summary/{}/ANOVA.txt"><h5>ANOVA</h5></a>\n'.format(secondary_folder_path, taxa_folder)
+				# Start table
+				anova_html += '<div style="height:400px;overflow:auto;"><table>'
+				for index,line in enumerate(anoava):
+					if index == 0:
+						# Header
+						anova_html += '<th>'
+						split_line= line.split('\t')
+						for cell in split_line:
+							# Add cell to row
+							anova_html += '<td>{}</td>'.format(cell)
+						# End row
+						anova_html += '</th>'
+					else:
+						# Start row
+						anova_html += '<tr>'
+						split_line= line.split('\t')
+						for cell in split_line:
+							# Add cell to row
+							anova_html += '<td>{}</td>'.format(cell)
+						# End row
+						anova_html += '</tr>'
+						
+				# End table
+				anova_html += '</table></div>'
+				body_string += anova_html
 
 	# Core microbiome
 	body_string += '<a name="core"><h2>Core microbiome</h2></a><h5>Something something core microbiome</h5>\n'
@@ -287,6 +327,7 @@ def alpha_div_collated_to_html_table(secondary_folder_path):
 		table_string += '</table>'
 		alpha_div_html += table_string
 	return alpha_div_html
+
 
 
 def main():
