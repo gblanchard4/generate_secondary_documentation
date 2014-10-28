@@ -32,19 +32,25 @@ def make_html(folder_name, body):
 	""".format(os.path.basename(folder_name), body)
 	return html_string
 
+def start_div():
+	return "<div>\n"
+
+def end_div():
+	return	"</div>\n"
+
 # Make the main landing page
 def make_overview_body(analysis_folder):
 	# String buffer to hold the body
-	body_string = ""
-
+	body_string = start_div()
 	# Make the heading for the page the analysis folder name
-	folder_header = "<h1>{}</h1>\n".format(os.path.basename(analysis_folder)) 
+	folder_header = "<header><h1>{}</h1><header>\n".format(os.path.basename(analysis_folder)) 
 	# Add it to the string buffer
 	body_string += folder_header
 	# Add the secondary folders to the string buffer
 	for secondary_folder in list_subdirectories(analysis_folder):
 		folder_link ='\t\t<h2><a href="{}">{}</a></h2>\n'.format(secondary_folder+'/overview.html', secondary_folder)
 		body_string+=folder_link
+	body_string += end_div()
 	return body_string
 
 # Helper function to return only the secondary folders
@@ -55,13 +61,11 @@ def list_subdirectories(parent_dir):
 # Make the html body for the secondary folders
 def make_secondary_body(secondary_folder_path):
 	# String buffer to hold the body
-	body_string = ""
-
+	body_string = start_div()
 	# The name of the secondary folder
 	folder_name = os.path.basename(secondary_folder_path)
 	# Make the heading for the page the analysis folder name
 	body_string += '<h1>{}</h1>\n'.format(os.path.basename(folder_name)) 
-
 	# Table of contents
 	body_string += '''
 <h3>Table of contents</h3>
@@ -70,11 +74,16 @@ def make_secondary_body(secondary_folder_path):
 <a href="#taxa"><h4>Taxa Summary</h4></a>\n
 <a href="#otu"><h4>OTU Category Significance</h4></a>\n
 <a href="#core"><h4>Core Microbiome</h4></a>\n<hr>'''
+	# End Table of Contents div
+	body_string += end_div()
 
 	# Biom Stats
+	body_string += start_div()
 	body_string += biom_summary_to_html_table(secondary_folder_path)
+	body_string += end_div()
 
 	# Alpha diversity
+	body_string += start_div()
 	body_string += '<a name="alpha"><h2>Alpha Diversity</h2></a>\n'
 	# Descriptor
 	body_string += '<h4>Alpha Diversity describes the he diversity within a sample.</h4>\n'
@@ -88,8 +97,10 @@ def make_secondary_body(secondary_folder_path):
 	body_string += alpha_div_collated_to_html_table(secondary_folder_path)
 	# Seperator
 	body_string += '<hr>'
+	body_string += end_div()
 
 	# Beta Diversity
+	body_string += start_div()
 	body_string += '<a name="beta"><h2>Beta Diversity</h2></a>\n'
 	# Descriptor
 	body_string += '<h4>Beta Diversity describes the diversity between samples.</h4>\n'
@@ -126,9 +137,13 @@ def make_secondary_body(secondary_folder_path):
 	body_string += beta_2d
 	body_string += beta_3d
 	# Add anosim
-	body_string += anosim + anosim_unweighted + anosim_weighted +"<hr>\n"
+	body_string += anosim + anosim_unweighted + anosim_weighted 
+	body_string += "<hr>"
+	body_string += end_div()
+
 	
 	# Taxa summary
+	body_string += start_div()
 	body_string += '<a name="taxa"><h2>Taxa Summary</h2></a>\n'
 	# Descriptor
 	body_string += '<h4>Taxanomic charts that show the makeup of each sample for Phylum through Species levels.</h4>\n'
@@ -141,8 +156,10 @@ def make_secondary_body(secondary_folder_path):
 		body_string += '<h3>{0}</h3><h5><p><a href="./taxa_summary/{0}/taxa_summary_plots/bar_charts.html">Bar Charts</a> | <a href="./taxa_summary/{0}/taxa_summary_plots/area_charts.html">Area Charts</a></h5></p>\n'.format(taxa_folder)
 	# Section break
 	body_string += '<hr>\n'	
+	body_string += end_div()
 
 	# Otu category sig
+	body_string += start_div()
 	body_string += '<a name="otu"><h2><OTU Category Significance/h2></a>\n'
 	# Descriptor
 	body_string += '<h4>Tests whether any of the OTUs in an OTU table are significantly associated with a category in the category mapping file.</h4>\n'
@@ -212,8 +229,10 @@ def make_secondary_body(secondary_folder_path):
 				body_string += gtest_html
 	# Section break
 	body_string += '<hr>\n'
+	body_string += end_div()
 
 	# Core microbiome
+	body_string += start_div()
 	body_string += '<a name="core"><h2>Core microbiome</h2></a><h5>Something something core microbiome</h5>\n'
 	# Create links to all the core microbiome stuffs
 	for core_folder in list_subdirectories(secondary_folder_path+'/core_microbiome/'):
@@ -257,6 +276,8 @@ def make_secondary_body(secondary_folder_path):
 		pdf_path = secondary_folder_path+'/core_microbiome/'+core_folder+'/core_otu_size.pdf'
 		pdf_buffer = '<tr><td>Graph</td><td colspan="{}"><a href="{}">core_otu_size.pdf</a></td></tr>\n'.format(span_length,pdf_path)
 		body_string += '<table>{}</tr>{}</tr><tr>{}</tr></table>'.format(txt_buffer, biom_buffer, pdf_buffer)
+		body_string += "<hr>"
+		body_string += end_div()
 	return body_string
 
 # Get an image for the bar and area charts to use, return a tuple (barchart.png, areachart.png)
