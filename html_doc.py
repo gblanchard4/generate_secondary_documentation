@@ -63,7 +63,13 @@ def make_secondary_body(secondary_folder_path):
 	body_string += '<h1>{}</h1>\n'.format(os.path.basename(folder_name)) 
 
 	# Table of contents
-	body_string += '<h3>Table of contents</h3><a href="#alpha"><h4>Alpha Diversity</h4></a>\n<a href="#beta"><h4>Beta Diversity</h4></a>\n<a href="#taxa"><h4>Taxa Summary</h4></a>\n<a href="#core"><h4>Core Microbiome</h4></a>\n<hr>'
+	body_string += '''
+<h3>Table of contents</h3>
+<a href="#alpha"><h4>Alpha Diversity</h4></a>\n
+<a href="#beta"><h4>Beta Diversity</h4></a>\n
+<a href="#taxa"><h4>Taxa Summary</h4></a>\n
+<a href="#otu"><h4>OTU Category Significance</h4></a>\n
+<a href="#core"><h4>Core Microbiome</h4></a>\n<hr>'''
 
 	# Biom Stats
 	body_string += biom_summary_to_html_table(secondary_folder_path)
@@ -204,6 +210,8 @@ def make_secondary_body(secondary_folder_path):
 				# End table
 				gtest_html += '</table></div>'
 				body_string += gtest_html
+	# Section break
+	body_string += '<hr>\n'
 
 	# Core microbiome
 	body_string += '<a name="core"><h2>Core microbiome</h2></a><h5>Something something core microbiome</h5>\n'
