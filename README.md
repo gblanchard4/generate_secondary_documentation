@@ -14,55 +14,40 @@ Right now the script expects a certain folder structure, I will try to generaliz
 RootFolder
 |
 └───/Secondary1
-		|
-		|->	mapping_file.txt
-		|->	mapping_file.txt
-		|->	tree_file.tre
-		|->	biom.biom
 		|->	table_summary.txt
 		|
 		└───/alpha_diversity
-		|		|
 		|		└───/alpha_div_collated
-		|		|		|
-		|		|		|-> rarefaction_plots.html
-		|		|		|
-		|		|		└───/average_plots	
-		|		|
+		|		|		└───/[metric]_[category]
+		|		|				|─> [category]_boxplots.pdf
+		|		|				|─> [category]_stats.txt
 		|		└───/alpha_rarefaction_plots
+		|				|─> rarefaction_plots.html
 		|
 		└───/beta_diversity
-		|		|
-		|		└───/2d_unweighted_unifrac_plots
-		|		|
-		|		└───/2d_weigthted_uniifrac_plots
-		|		|
-		|		└───/ANOSIM_*_unweighted
-		|		|
-		|		└───/ANOSIM_*_weighted
-		|		|
-		|		└───/unweighted_unifrac_emperor_pcoa_plot
-		|		|
-		|		└───/weighted_unifrac_emperor_pcoa_plot
-		|		
+		|		└───/2d_unweighted_unifrac_plots/
+		|		|			|─> *.html
+		|		└───/2d_weigthted_uniifrac_plots/
+		|		|			|─> *.html
+		|		└───/unweighted_unifrac_emperor_pcoa_plot/
+		|		|			|─> *.html
+		|		└───/weighted_unifrac_emperor_pcoa_plot/
+		|		|			|─> *.html
+		|		└───/ANOSIM_*_unweighte/
+		|		|			|─> anosim_results.txt
+		|		└───/ANOSIM_*_weighted/
+		|					|─> anosim_results.txt
 		|
 		└───/taxa_summary
-		|		|
-		|		└───/taxa_*
-		|				|
+		|		└───/taxa_[category]
 		|				└───/taxa_summary_plots
-		|						|
-		|						|-> area_charts.html
-		|						|-> bar_charts.html
-		|						|
-		|						└───/charts
+		|						|─> area_charts.html
+		|						|─> bar_charts.html
 		|
 		└───/core_microbiome
-				|
-				└───core_microbiome_*/
-						|
-						|─> core_otus_(50-100).txt
-						|─> core_otus_(50-100).biom
+				└───core_microbiome_[category]/
+						|─> core_otus_[50-100].txt
+						|─> core_otus_[50-100].biom
 						|─> core_otus_size.pdf
 
 ```
