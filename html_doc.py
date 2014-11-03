@@ -80,6 +80,7 @@ def make_secondary_body(secondary_folder_path):
 <a href="#taxa"><h4>Taxa Summary</h4></a>\n
 <a href="#otu"><h4>OTU Category Significance</h4></a>\n
 <a href="#core"><h4>Core Microbiome</h4></a>\n<hr>'''
+
 	# End Table of Contents div
 	body_string += end_div()
 	#========================================================
@@ -87,6 +88,7 @@ def make_secondary_body(secondary_folder_path):
 	#========================================================
 	body_string += start_div()
 	body_string += biom_summary_to_html_table(secondary_folder_path)
+
 	body_string += end_div()
 	#========================================================
 	# Alpha diversity
@@ -168,21 +170,19 @@ def make_secondary_body(secondary_folder_path):
 
 	# Otu category sig
 	body_string += start_div()
-	body_string += '<a name="otu"><h2><OTU Category Significance/h2></a>\n'
+	body_string += '<a name="otu"><h2>OTU Category Significance</h2></a>\n'
 	# Descriptor
 	body_string += '<h4>Tests whether any of the OTUs in an OTU table are significantly associated with a category in the category mapping file.</h4>\n'
 	# Instructions
 	# body_string += '<h5>These files can be very large, this is a quick overview of the first 10 lines</h4>\n'
 	for taxa_folder in os.listdir(secondary_folder_path+'/taxa_summary/'):
+		body_string += '<h4>{}</h4>\n'.format(taxa_folder)
 		# ANOVA
 		if os.path.isfile(secondary_folder_path+'/taxa_summary/'+taxa_folder+'/ANOVA.txt'):
-			body_string += '<h4>{}</h4>\n'.format(taxa_folder)
-			anova_file = '{}/taxa_summary/{}/ANOVA.txt'.format(secondary_folder_path, taxa_folder)
-			body_string += anova_to_html(anova_file)
+			body_string += anova_to_html(secondary_folder_path, taxa_folder)
 		# G_test	
 		if os.path.isfile(secondary_folder_path+'/taxa_summary/'+taxa_folder+'/g_test.txt'):
-			gtest_file = '{}/taxa_summary/{}/g_test.txt'.format(secondary_folder_path, taxa_folder)
-			body_string += gtest_to_html(gtest_file)
+			body_string += gtest_to_html(secondary_folder_path, taxa_folder)
 	# Section break
 	body_string += '<hr>\n'
 	body_string += end_div()
@@ -261,7 +261,7 @@ def get_beta_image_2d(beta_html):
 def biom_summary_to_html_table(secondary_folder_path):
 	with open(secondary_folder_path+'/table_summary.txt', 'r') as table_file:
 		# Table header string 
-		table_string = '<h2><a href="{}">Biom Table Stats</a></h2>\n<table>'.format(os.path.basename(secondary_folder_path)+'/table_summary.txt')
+		table_string = '<h2><a href="./table_summary.txt">Biom Table Stats</a></h2>\n<table>'
 		for line in table_file:
 			# Get important information
 			# Number of samples
@@ -342,6 +342,65 @@ def alpha_div_collated_to_html_table(secondary_folder_path):
 		alpha_div_html += table_string
 	return alpha_div_html
 
+def anova_to_html(secondary_folder_path, taxa_folder):
+	anova_file = '{}/taxa_summary/{}/ANOVA.txt'.format(secondary_folder_path, taxa_folder)
+	with open(anova_file, 'r') as anoava:
+		# File link
+		anova_html = '<a href="./taxa_summary/{}/ANOVA.txt"><h5>ANOVA</h5></a>\n'.format(taxa_folder)
+		# Start table
+		anova_html += '<div style="height:25em;overflow:auto;"><table>'
+		for index,line in enumerate(anoava):
+			if index == 0:
+				# Header
+				anova_html += '<tr>'
+				split_line= line.rstrip('\n').split('\t')
+				for cell in split_line:
+					# Add cell to row
+					anova_html += '<td nowrap>{}</td>'.format(cell)
+				# End row
+				anova_html += '</tr>'
+			else:
+				# Start row
+				anova_html += '<tr>'
+				split_line= line.split('\t')
+				for cell in split_line:
+					# Add cell to row
+					anova_html += '<td nowrap>{}</td>'.format(cell)
+				# End row
+				anova_html += '</tr>'
+		# End table
+		anova_html += '</table></div>'
+	return anova_html
+
+def gtest_to_html(secondary_folder_path, taxa_folder):
+	gtest_file = '{}/taxa_summary/{}/g_test.txt'.format(secondary_folder_path, taxa_folder)
+	with open(gtest_file, 'r') as gtest:
+		# File link
+		gtest_html = '<a href="./taxa_summary/{}/g_test.txt"><h5>G Test</h5></a>\n'.format(taxa_folder)
+		# Start table
+		gtest_html += '<div style="height:25em;overflow:auto;"><table>'
+		for index,line in enumerate(gtest):
+			if index == 0:
+				# Header
+				gtest_html += '<tr>'
+				split_line= line.rstrip('\n').split('\t')
+				for cell in split_line:
+					# Add cell to row
+					gtest_html += '<td nowrap>{}</td>'.format(cell)
+				# End row
+				gtest_html += '</tr>'
+			else:
+				# Start row
+				gtest_html += '<tr>'
+				split_line= line.split('\t')
+				for cell in split_line:
+					# Add cell to row
+					gtest_html += '<td nowrap>{}</td>'.format(cell)
+				# End row
+				gtest_html += '</tr>'
+		# End table
+		gtest_html += '</table></div>'
+		return gtest_html
 
 
 def main():
@@ -382,39 +441,5 @@ def main():
 			with open(path+'/overview.html', 'w') as html_file:
 				html_file.write(make_html(path, make_secondary_body(analysis_folder+'/'+secondary_folder)))
 	
-
-def anova_to_html(anova_file):
-	with open(anova_file, 'r') as anoava:
-		# File link
-		anova_html = '<a href="./{}/taxa_summary/{}/ANOVA.txt"><h5>ANOVA</h5></a>\n'.format(secondary_folder_path, taxa_folder)
-		# Start table
-		anova_html += '<div style="height:25em;overflow:auto;"><table>'
-		for index,line in enumerate(anoava):
-			if index == 0:
-				# Header
-				anova_html += '<tr>'
-				split_line= line.rstrip('\n').split('\t')
-				for cell in split_line:
-					# Add cell to row
-					anova_html += '<td nowrap>{}</td>'.format(cell)
-				# End row
-				anova_html += '</tr>'
-			else:
-				# Start row
-				anova_html += '<tr>'
-				split_line= line.split('\t')
-				for cell in split_line:
-					# Add cell to row
-					anova_html += '<td nowrap>{}</td>'.format(cell)
-				# End row
-				anova_html += '</tr>'
-		# End table
-		anova_html += '</table></div>'
-	return anova_html
-
-
-
-
-
 if __name__ == '__main__':
 	main()
