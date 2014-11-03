@@ -417,14 +417,6 @@ def main():
 	analysis_folder = os.path.abspath(args.input)
 	noroot = args.noroot
 
-	# Error checking
-	ERROR = False
-	#Make sure the input directory exists
-	if not os.path.isdir(analysis_folder):
-		print "Input directory not found"
-		ERROR = True
-
-
 	# Mainpage is only if noroot == False
 	if noroot:
 		# Write the secondary pages
