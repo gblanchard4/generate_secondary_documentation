@@ -64,9 +64,15 @@ def make_secondary_body(secondary_folder_path):
 	body_string = start_div()
 	# The name of the secondary folder
 	folder_name = os.path.basename(secondary_folder_path)
+
+	#========================================================
+	# Title
+	#========================================================
 	# Make the heading for the page the analysis folder name
 	body_string += '<h1>{}</h1>\n'.format(os.path.basename(folder_name)) 
+	#========================================================
 	# Table of contents
+	#========================================================
 	body_string += '''
 <h3>Table of contents</h3>
 <a href="#alpha"><h4>Alpha Diversity</h4></a>\n
@@ -76,13 +82,15 @@ def make_secondary_body(secondary_folder_path):
 <a href="#core"><h4>Core Microbiome</h4></a>\n<hr>'''
 	# End Table of Contents div
 	body_string += end_div()
-
+	#========================================================
 	# Biom Stats
+	#========================================================
 	body_string += start_div()
 	body_string += biom_summary_to_html_table(secondary_folder_path)
 	body_string += end_div()
-
+	#========================================================
 	# Alpha diversity
+	#========================================================
 	body_string += start_div()
 	body_string += '<a name="alpha"><h2>Alpha Diversity</h2></a>\n'
 	# Descriptor
@@ -98,8 +106,9 @@ def make_secondary_body(secondary_folder_path):
 	# Seperator
 	body_string += '<hr>'
 	body_string += end_div()
-
+	#========================================================
 	# Beta Diversity
+	#========================================================
 	body_string += start_div()
 	body_string += '<a name="beta"><h2>Beta Diversity</h2></a>\n'
 	# Descriptor
@@ -132,7 +141,6 @@ def make_secondary_body(secondary_folder_path):
 		if beta_folder.startswith('ANOSIM_') and '_weighted' in beta_folder:
 			anosim_weighted += '<a href="./beta_diversity/{0}/anosim_results.txt"><h5>{0}</h5></a>\n'.format(beta_folder)
 			anosim_weighted += anosim_to_html_table('/{0}/beta_diversity/{1}/anosim_results.txt'.format(secondary_folder_path, beta_folder))
-
 	# Add the 2d and 3d html
 	body_string += beta_2d
 	body_string += beta_3d
@@ -140,9 +148,9 @@ def make_secondary_body(secondary_folder_path):
 	body_string += anosim + anosim_unweighted + anosim_weighted 
 	body_string += "<hr>"
 	body_string += end_div()
-
-	
+	#========================================================
 	# Taxa summary
+	#========================================================
 	body_string += start_div()
 	body_string += '<a name="taxa"><h2>Taxa Summary</h2></a>\n'
 	# Descriptor
@@ -170,68 +178,17 @@ def make_secondary_body(secondary_folder_path):
 		if os.path.isfile(secondary_folder_path+'/taxa_summary/'+taxa_folder+'/ANOVA.txt'):
 			body_string += '<h4>{}</h4>\n'.format(taxa_folder)
 			anova_file = '{}/taxa_summary/{}/ANOVA.txt'.format(secondary_folder_path, taxa_folder)
-			with open(anova_file, 'r') as anoava:
-				# File link
-				anova_html = '<a href="./{}/taxa_summary/{}/ANOVA.txt"><h5>ANOVA</h5></a>\n'.format(secondary_folder_path, taxa_folder)
-				# Start table
-				anova_html += '<div style="height:25em;overflow:auto;"><table>'
-				for index,line in enumerate(anoava):
-					if index == 0:
-						# Header
-						anova_html += '<tr>'
-						split_line= line.rstrip('\n').split('\t')
-						for cell in split_line:
-							# Add cell to row
-							anova_html += '<td nowrap>{}</td>'.format(cell)
-						# End row
-						anova_html += '</tr>'
-					else:
-						# Start row
-						anova_html += '<tr>'
-						split_line= line.split('\t')
-						for cell in split_line:
-							# Add cell to row
-							anova_html += '<td nowrap>{}</td>'.format(cell)
-						# End row
-						anova_html += '</tr>'
-				# End table
-				anova_html += '</table></div>'
-				body_string += anova_html
+			body_string += anova_to_html(anova_file)
 		# G_test	
 		if os.path.isfile(secondary_folder_path+'/taxa_summary/'+taxa_folder+'/g_test.txt'):
 			gtest_file = '{}/taxa_summary/{}/g_test.txt'.format(secondary_folder_path, taxa_folder)
-			with open(gtest_file, 'r') as gtest:
-				# File link
-				gtest_html = '<a href="./{}/taxa_summary/{}/g_test.txt"><h5>G Test</h5></a>\n'.format(secondary_folder_path, taxa_folder)
-				# Start table
-				gtest_html += '<div style="height:25em;overflow:auto;"><table>'
-				for index,line in enumerate(gtest):
-					if index == 0:
-						# Header
-						gtest_html += '<tr>'
-						split_line= line.rstrip('\n').split('\t')
-						for cell in split_line:
-							# Add cell to row
-							gtest_html += '<td nowrap>{}</td>'.format(cell)
-						# End row
-						gtest_html += '</tr>'
-					else:
-						# Start row
-						gtest_html += '<tr>'
-						split_line= line.split('\t')
-						for cell in split_line:
-							# Add cell to row
-							gtest_html += '<td nowrap>{}</td>'.format(cell)
-						# End row
-						gtest_html += '</tr>'
-				# End table
-				gtest_html += '</table></div>'
-				body_string += gtest_html
+			body_string += gtest_to_html(gtest_file)
 	# Section break
 	body_string += '<hr>\n'
 	body_string += end_div()
-
+	#========================================================
 	# Core microbiome
+	#========================================================
 	body_string += start_div()
 	body_string += '<a name="core"><h2>Core microbiome</h2></a><h5>Something something core microbiome</h5>\n'
 	# Create links to all the core microbiome stuffs
@@ -425,6 +382,39 @@ def main():
 			with open(path+'/overview.html', 'w') as html_file:
 				html_file.write(make_html(path, make_secondary_body(analysis_folder+'/'+secondary_folder)))
 	
+
+def anova_to_html(anova_file):
+	with open(anova_file, 'r') as anoava:
+		# File link
+		anova_html = '<a href="./{}/taxa_summary/{}/ANOVA.txt"><h5>ANOVA</h5></a>\n'.format(secondary_folder_path, taxa_folder)
+		# Start table
+		anova_html += '<div style="height:25em;overflow:auto;"><table>'
+		for index,line in enumerate(anoava):
+			if index == 0:
+				# Header
+				anova_html += '<tr>'
+				split_line= line.rstrip('\n').split('\t')
+				for cell in split_line:
+					# Add cell to row
+					anova_html += '<td nowrap>{}</td>'.format(cell)
+				# End row
+				anova_html += '</tr>'
+			else:
+				# Start row
+				anova_html += '<tr>'
+				split_line= line.split('\t')
+				for cell in split_line:
+					# Add cell to row
+					anova_html += '<td nowrap>{}</td>'.format(cell)
+				# End row
+				anova_html += '</tr>'
+		# End table
+		anova_html += '</table></div>'
+	return anova_html
+
+
+
+
 
 if __name__ == '__main__':
 	main()
