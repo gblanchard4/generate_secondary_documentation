@@ -43,7 +43,7 @@ def make_overview_body(analysis_folder):
 	# String buffer to hold the body
 	body_string = start_div()
 	# Make the heading for the page the analysis folder name
-	folder_header = "<header><h1>{}</h1><header>\n".format(os.path.basename(analysis_folder)) 
+	folder_header = "<header><h1>{}</h1><header>\n".format(os.path.basename(analysis_folder))
 	# Add it to the string buffer
 	body_string += folder_header
 	# Add the secondary folders to the string buffer
@@ -69,7 +69,7 @@ def make_secondary_body(secondary_folder_path):
 	# Title
 	#========================================================
 	# Make the heading for the page the analysis folder name
-	body_string += '<h1>{}</h1>\n'.format(os.path.basename(folder_name)) 
+	body_string += '<h1>{}</h1>\n'.format(os.path.basename(folder_name))
 	#========================================================
 	# Table of contents
 	#========================================================
@@ -123,7 +123,7 @@ def make_secondary_body(secondary_folder_path):
 	anosim_unweighted = '<h4>ANOSIM Unweighted</h4>\n'
 	anosim_weighted = '<h4>ANOSIM Weighted</h4>\n'
 	for beta_folder in os.listdir(secondary_folder_path+"/beta_diversity/"):
-		
+
 		# For the 2d plots
 		if beta_folder.startswith('2d_unweighted'):
 			beta_png = get_beta_image_2d("{0}/beta_diversity/2d_unweighted_unifrac_plots/unweighted_unifrac_pc_2D_PCoA_plots.html".format(secondary_folder_path))
@@ -131,7 +131,7 @@ def make_secondary_body(secondary_folder_path):
 		if beta_folder.startswith('2d_weighted'):
 			beta_png = get_beta_image_2d("{0}/beta_diversity/2d_weighted_unifrac_plots/weighted_unifrac_pc_2D_PCoA_plots.html".format(secondary_folder_path))
 			beta_2d += '<h4>Weighted</h4><a href="./beta_diversity/2d_weighted_unifrac_plots/weighted_unifrac_pc_2D_PCoA_plots.html"><img src="./beta_diversity/2d_weighted_unifrac_plots/{}"></a>\n'.format(beta_png)
-		
+
 		# For the 3d Emperor plots
 		if '_emperor_' in beta_folder and beta_folder.startswith('unweighted_'):
 			beta_3d += '<a href="./beta_diversity/unweighted_unifrac_emperor_pcoa_plot/index.html"><h5>Unweighted</h5></a>\n'
@@ -147,7 +147,7 @@ def make_secondary_body(secondary_folder_path):
 	body_string += beta_2d
 	body_string += beta_3d
 	# Add anosim
-	body_string += anosim + anosim_unweighted + anosim_weighted 
+	body_string += anosim + anosim_unweighted + anosim_weighted
 	body_string += "<hr>"
 	body_string += end_div()
 	#========================================================
@@ -165,7 +165,7 @@ def make_secondary_body(secondary_folder_path):
 		#body_string += '<h3>{0}</h3>\n<a href="file://{1}/taxa_summary/{0}/taxa_summary_plots/bar_charts.html"><img src="{2}"></a>\n<a href="file://{1}/taxa_summary/{0}/taxa_summary_plots/area_charts.html"><img src="{3}"></a>\n'.format(taxa_folder, secondary_folder_path, bar_png, area_png)
 		body_string += '<h3>{0}</h3><h5><p><a href="./taxa_summary/{0}/taxa_summary_plots/bar_charts.html">Bar Charts</a> | <a href="./taxa_summary/{0}/taxa_summary_plots/area_charts.html">Area Charts</a></h5></p>\n'.format(taxa_folder)
 	# Section break
-	body_string += '<hr>\n'	
+	body_string += '<hr>\n'
 	body_string += end_div()
 
 	# Otu category sig
@@ -180,7 +180,7 @@ def make_secondary_body(secondary_folder_path):
 		# ANOVA
 		if os.path.isfile(secondary_folder_path+'/taxa_summary/'+taxa_folder+'/ANOVA.txt'):
 			body_string += anova_to_html(secondary_folder_path, taxa_folder)
-		# G_test	
+		# G_test
 		if os.path.isfile(secondary_folder_path+'/taxa_summary/'+taxa_folder+'/g_test.txt'):
 			body_string += gtest_to_html(secondary_folder_path, taxa_folder)
 	# Section break
@@ -202,7 +202,7 @@ def make_secondary_body(secondary_folder_path):
 		biom_list = []
 		# Traverse the core folder for all its children
 		for child_file in os.listdir(secondary_folder_path+'/core_microbiome/'+core_folder):
-			# Use level for sorting 
+			# Use level for sorting
 			# Text files
 			if child_file.split('.')[1] == 'txt':
 				level = int(child_file.rstrip('.txt').split('_')[-1])
@@ -243,7 +243,7 @@ def get_taxa_image(taxa_folder_path):
 	with open('{}bar_charts.html'.format(taxa_folder_path), 'r') as bar:
 		file_buffer = bar.read()
 		bar_png = taxa_folder_path+file_buffer.split(' border=1 ismap usemap="#pointsrect1" /><br></td>')[0].split('<tr><td class="ntitle"><img src=')[1].strip("'")
-	# Get area png 
+	# Get area png
 	with open('{}area_charts.html'.format(taxa_folder_path), 'r') as area:
 		file_buffer = area.read()
 		area_png = taxa_folder_path+file_buffer.split(' border=1 ismap usemap="#pointsrect1" /><br></td>')[0].split('<tr><td class="ntitle"><img src=')[1].strip("'")
@@ -260,7 +260,7 @@ def get_beta_image_2d(beta_html):
 # Turn a biom file into an html table of useful numbers
 def biom_summary_to_html_table(secondary_folder_path):
 	with open(secondary_folder_path+'/table_summary.txt', 'r') as table_file:
-		# Table header string 
+		# Table header string
 		table_string = '<h2><a href="./table_summary.txt">Biom Table Stats</a></h2>\n<table>'
 		for line in table_file:
 			# Get important information
@@ -290,18 +290,33 @@ def biom_summary_to_html_table(secondary_folder_path):
 		table_string += '</table><hr>\n'
 	return table_string
 
+# def anosim_to_html_table(anosim_txt):
+# 	# Table header string
+# 	table_string = '<table>\n'
+# 	try:
+# 		with open(anosim_txt) as anosim_file:
+# 			for line in anosim_file:
+# 				split_line = line.rstrip().split('\t')
+# 				table_string += '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>\n'.format(split_line[0],split_line[1],split_line[2],split_line[3])
+# 			table_string += '</table>'
+# 	except IOError:
+# 		table_string += '<tr><td>File Not Found</td></tr></table>'
+#
+# 	return table_string
+
 def anosim_to_html_table(anosim_txt):
-	# Table header string 
 	table_string = '<table>\n'
 	try:
 		with open(anosim_txt) as anosim_file:
-			for line in anosim_file:
-				split_line = line.rstrip().split('\t')
-				table_string += '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>\n'.format(split_line[0],split_line[1],split_line[2],split_line[3])
+			anosim_read = anosim_file.readlines()
+			method = anosim_read[0].split('\t')[-1].rstrip('\n')
+			r_stat = anosim_read[4].split('\t')[-1].rstrip('\n')
+			p_val =  anosim_read[5].split('\t')[-1].rstrip('\n')
+			perms =  anosim_read[6].split('\t')[-1].rstrip('\n')
+			table_string += '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>\n'.format(method,r_stat,p_val,perms)
 			table_string += '</table>'
 	except IOError:
 		table_string += '<tr><td>File Not Found</td></tr></table>'
-
 	return table_string
 
 def alpha_div_collated_to_html_table(secondary_folder_path):
@@ -311,14 +326,14 @@ def alpha_div_collated_to_html_table(secondary_folder_path):
 	# Collection of categories in the folder
 	category_dict = defaultdict(list)
 	for folder in list_subdirectories(alpha_div_collated_path):
-		# Split the name on the last element 
+		# Split the name on the last element
 		category = folder.split('_')[-1]
 		# Add the folder to the dictionary with the category as the key
 		category_dict[category].append(folder)
 	# Make html tables for each file per category
 	alpha_div_html = "<h4>Alpha Div Collated</h4>\n"
 	for key in category_dict.keys():
-		# Filename 
+		# Filename
 		table_string = '<h5>{}</h5>\n<div style="height:20em;overflow:auto;width:auto;"><table>\n'.format(key)
 		# Table Header
 		table_string += '<tr><td>Metric</td><td>Group1</td><td>Group2</td><td>Group1 mean</td><td>Group1 std</td><td>Group2 mean</td><td>Group2 std</td><td>t stat</td><td>p-value</td></tr>\n'
@@ -413,7 +428,7 @@ def main():
 
 	# Parse arguments
 	args = parser.parse_args()
-	# Set arguments 
+	# Set arguments
 	analysis_folder = os.path.abspath(args.input)
 	noroot = args.noroot
 
@@ -432,6 +447,6 @@ def main():
 			path = analysis_folder+'/'+secondary_folder
 			with open(path+'/overview.html', 'w') as html_file:
 				html_file.write(make_html(path, make_secondary_body(analysis_folder+'/'+secondary_folder)))
-	
+
 if __name__ == '__main__':
 	main()
