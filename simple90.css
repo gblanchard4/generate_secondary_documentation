@@ -1,5 +1,5 @@
 body {
-  width: 95%;
+  width: 98%;
   border: 1px solid #ddd;
   outline: 1300px solid #fff;
   margin: 16px auto;
@@ -470,11 +470,7 @@ body .markdown-body
 }
 
 .markdown-body table {
-  display: block;
-  width: 100%;
-  overflow: scroll;
-  word-break: normal;
-  word-break: keep-all;
+  
 }
 
 .markdown-body table th {
